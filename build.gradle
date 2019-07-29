@@ -1,0 +1,39 @@
+plugins {
+    id 'groovy'
+    id 'maven'
+    id 'idea'
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.10.0'
+}
+
+group = 'ru.craftcoderr.gradledeploy'
+version = '1.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+    compile gradleApi()
+    compile localGroovy()
+}
+
+pluginBundle {
+    website = "https://github.com/CraftCoderr/GradleDeploy"
+    vcsUrl = website
+    tags = ["deploy"]
+}
+
+gradlePlugin {
+    plugins {
+        gradleDeploy {
+            id = 'ru.craftcoderr.gradledeploy'
+            displayName = 'Gradle Deploy'
+            description = 'Gradle plugin providing artifact deployment to local directories'
+            implementationClass = 'ru.craftcoderr.gradledeploy.DeployPlugin'
+        }
+    }
+}

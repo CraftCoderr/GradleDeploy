@@ -3,11 +3,11 @@ plugins {
     id 'maven'
     id 'idea'
     id 'java-gradle-plugin'
-    id 'com.gradle.plugin-publish' version '0.10.0'
+    id 'maven-publish'
 }
 
 group = 'ru.craftcoderr.gradledeploy'
-version = '1.0'
+version = '1.1'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -21,12 +21,6 @@ dependencies {
     compile localGroovy()
 }
 
-pluginBundle {
-    website = "https://github.com/CraftCoderr/GradleDeploy"
-    vcsUrl = website
-    tags = ["deploy"]
-}
-
 gradlePlugin {
     plugins {
         gradleDeploy {
@@ -34,6 +28,19 @@ gradlePlugin {
             displayName = 'Gradle Deploy'
             description = 'Gradle plugin providing artifact deployment to local directories'
             implementationClass = 'ru.craftcoderr.gradledeploy.DeployPlugin'
+        }
+    }
+}
+
+publishing {
+    publications {
+        jar(MavenPublication) { publication ->
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            url = 'http://archiva.cerebus.local/repository/snapshots/'
         }
     }
 }

@@ -1,6 +1,8 @@
 package ru.craftcoderr.gradledeploy
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.TaskAction
 
 import java.nio.file.Files
@@ -12,11 +14,21 @@ class Deploy extends DefaultTask {
     Object config = 'deploy.list'
     String artifactNameDelimiter = '-'
     String deployExtension = 'jar'
+    Object buildTask = project.tasks.getByName('build')
+    Configuration artifactSource = project.configurations.getByName('compile')
+
+    @Override
+    Task configure(Closure closure) {
+        super.configure(closure)
+        getDependsOn().clear()
+        dependsOn(buildTask)
+        return this
+    }
 
     @TaskAction
     void deployArtifacts() {
         String[] paths = project.file(config).readLines()
-        project.configurations.shadow.allArtifacts.each { artifact ->
+        artifactSource.allArtifacts.each { artifact ->
             String name = artifact.file.name.split(artifactNameDelimiter)[0] + '.' + deployExtension
             paths.each { path ->
                 Path deployPath = project.file(path).toPath().resolve(name)

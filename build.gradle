@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'ru.craftcoderr.gradledeploy'
-version = '0.1.4'
+version = '0.1.5'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

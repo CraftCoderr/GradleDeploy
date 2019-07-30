@@ -1,6 +1,7 @@
 package ru.craftcoderr.gradledeploy
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskAction
@@ -46,7 +47,7 @@ class Deploy extends DefaultTask {
                     println(artifact.name + " deployed to " + deployPath + " successfully in "
                             + Integer.toString(time / 1000 as int) + "." + Integer.toString(time / 100 as int) + "s")
                 } catch (Exception e) {
-                    println("Deploy " + artifact.name + " to " + deployPath +
+                    throw new GradleException("Deploy " + artifact.name + " to " + deployPath +
                             " failed! Maybe deploy path is invalid or file alredy in use? Error: " + e.getMessage())
                 }
             }

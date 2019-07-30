@@ -2,7 +2,7 @@ package ru.craftcoderr.gradledeploy
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
+import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskAction
 
 import java.nio.file.Files
@@ -14,8 +14,15 @@ class Deploy extends DefaultTask {
     Object config = 'deploy.list'
     String artifactNameDelimiter = '-'
     String deployExtension = 'jar'
-    Object buildTask = project.tasks.getByName('build')
-    Configuration artifactSource = project.configurations.getByName('compile')
+    Object buildTask
+    FileCollection artifacts
+
+    Deploy() {
+        super()
+        buildTask = project.tasks.getByName('build')
+        artifacts = project.configurations.getByName('default').allArtifacts.files
+        configure {}
+    }
 
     @Override
     Task configure(Closure closure) {
@@ -28,13 +35,13 @@ class Deploy extends DefaultTask {
     @TaskAction
     void deployArtifacts() {
         String[] paths = project.file(config).readLines()
-        artifactSource.allArtifacts.each { artifact ->
-            String name = artifact.file.name.split(artifactNameDelimiter)[0] + '.' + deployExtension
+        artifacts.each { artifact ->
+            String name = artifact.name.split(artifactNameDelimiter)[0] + '.' + deployExtension
             paths.each { path ->
                 Path deployPath = project.file(path).toPath().resolve(name)
                 try {
                     long start = System.currentTimeMillis()
-                    Files.copy(artifact.file.toPath(), deployPath, StandardCopyOption.REPLACE_EXISTING)
+                    Files.copy(artifact.toPath(), deployPath, StandardCopyOption.REPLACE_EXISTING)
                     long time = System.currentTimeMillis() - start
                     println(artifact.name + " deployed to " + deployPath + " successfully in "
                             + Integer.toString(time / 1000 as int) + "." + Integer.toString(time / 100 as int) + "s")

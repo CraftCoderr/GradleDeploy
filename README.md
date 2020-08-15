@@ -3,7 +3,7 @@
 `build.gradle`
 ```groovy
 plugins {
-    id 'ru.craftcoderr.gradledeploy' version '0.1.5'
+    id 'ru.craftcoderr.gradledeploy' version '0.2.5-SNAPSHOT'
 }
 
 deploy {

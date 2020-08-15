@@ -14,15 +14,24 @@ import java.nio.file.StandardCopyOption
 
 class Deploy extends DefaultTask {
 
+    @Input
+    Object config = 'deploy.list'
+    @Input
+    String artifactNameDelimiter = '-'
+    @Input
+    String deployExtension = 'jar'
+    @Input
+    Task buildTask = project.tasks.build
+    @InputFiles
+    FileCollection artifacts = project.configurations.default.allArtifacts.files
+
+    @Override
+    Task configure(Closure closure) {
+        dependsOn(buildTask)
+    }
+
     @TaskAction
     void deployArtifacts() {
-        Object config = project.extensions.deploy.config
-        String artifactNameDelimiter = project.extensions.deploy.artifactNameDelimiter
-        String deployExtension = project.extensions.deploy.deployExtension
-        Object buildTask = project.extensions.deploy.buildTask
-        FileCollection artifacts = project.extensions.deploy.artifacts
-                ? project.extensions.deploy.artifacts : project.configurations.getByName('default').allArtifacts.files
-
         String[] paths = project.file(config).readLines()
         artifacts.each { artifact ->
             String name = artifact.name.split(artifactNameDelimiter)[0] + '.' + deployExtension

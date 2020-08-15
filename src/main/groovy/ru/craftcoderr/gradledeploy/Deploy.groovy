@@ -4,6 +4,8 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Task
 import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.TaskAction
 
 import java.nio.file.Files
@@ -12,29 +14,15 @@ import java.nio.file.StandardCopyOption
 
 class Deploy extends DefaultTask {
 
-    Object config = 'deploy.list'
-    String artifactNameDelimiter = '-'
-    String deployExtension = 'jar'
-    Object buildTask
-    FileCollection artifacts
-
-    Deploy() {
-        super()
-        buildTask = project.tasks.getByName('build')
-        artifacts = project.configurations.getByName('default').allArtifacts.files
-        configure {}
-    }
-
-    @Override
-    Task configure(Closure closure) {
-        super.configure(closure)
-        getDependsOn().clear()
-        dependsOn(buildTask)
-        return this
-    }
-
     @TaskAction
     void deployArtifacts() {
+        Object config = project.extensions.deploy.config
+        String artifactNameDelimiter = project.extensions.deploy.artifactNameDelimiter
+        String deployExtension = project.extensions.deploy.deployExtension
+        Object buildTask = project.extensions.deploy.buildTask
+        FileCollection artifacts = project.extensions.deploy.artifacts
+                ? project.extensions.deploy.artifacts : project.configurations.getByName('default').allArtifacts.files
+
         String[] paths = project.file(config).readLines()
         artifacts.each { artifact ->
             String name = artifact.name.split(artifactNameDelimiter)[0] + '.' + deployExtension

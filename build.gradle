@@ -6,8 +6,8 @@ plugins {
     id 'maven-publish'
 }
 
-group = 'ru.craftcoderr.gradledeploy'
-version = '0.1.5'
+group = 'ru.craftcoderr'
+version = '0.2.3-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -34,13 +34,17 @@ gradlePlugin {
 
 publishing {
     publications {
-        jar(MavenPublication) { publication ->
+        maven(MavenPublication) {
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+
             from components.java
         }
     }
     repositories {
         maven {
-            url = 'http://archiva.cerebus.local/repository/snapshots/'
+            url = 'http://archiva.cerebus.local/repository/internal/'
         }
     }
 }
